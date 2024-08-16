@@ -1,3 +1,36 @@
+# Terraform Code
+
+## Pre-Requisite
+Before executing Terraform code please make sure following things.
+1) To run this code you must have AWS CLI installed and configured along with terraform on environment from where you will be executing this code. (If executing Terraform code from Laptop or any VM) 
+2) Craete an S3 bucket to serve as a backend for storing terraform state file.
+
+## Description
+
+Terraform code for provisioning infrastructure on AWS is on root of this repo.\
+Default values for all variables are already set in variables.tf file. If you want to override any default value, so feel free to pass it through terraform apply command or create terraform.tfvars file with specific variables.\
+If you want to run this Terraform code from your Laptop or any VM so first you will need to initiate terraform by providing details of your S3 bucket.
+```sh
+terraform init -backend-config="bucket=<S3 bucket name>" -backend-config="key=<S3 bucket key name>" -backend-config="region=< AWS Region>"
+```
+Then you can run following commands to plan and execute terraform code.
+```sh
+terraform plan
+terraform apply
+```
+
+This code will provision following resources in your AWS account.
+1) VPC
+2) Four Subnets (two public and two private).
+3) A Nat Gateway (this will be attached in one of the public subnets to provide secure internet conectivity to pods deployed in private subnets).
+4) A Internet Gateway.
+5) Two Route Tables (one with rule to route traffic from private subnets to nat gateway and other with rule to route traffic between public subnets and internet gateway).
+6) EKS Cluster using Fargate (all required IAM policies and roles also will be created).
+7) A OIDC Provider for EKS cluster conectivity with other AWS resources.
+8) Two Fargate Profiles (one for kube-system namespace and other for custom namespace in which you can deploy application using helm code available in this repo. To improve security both profiles will be attached with private subnets so that pods can be deployed only in private subnets.).
+9) Install Metrics Server so that HPA can be implemented on cluster.
+10) Install AWS LoadBalancer Controller for handling ingress resources (all required IAM policies, roles and service account also will be created).
+
 # GitHub Actions
 ## Intrduction
 This folder contains GitHub Actions to automate EKS Cluster deployment using Terraform code.
@@ -73,17 +106,6 @@ You will have to setup follwoing things to run this workflows.
 ## Run it
 ### Deploy
 Once all above Pre-Requisite steps are done you will be ready to give it a run.\
-For that, push any small change in to main branch and deployment workflow will be triggered. Once that will complete successfully infrastructure will be provisioned on your AWS account. Which will contain following resources.
-
-1) VPC
-2) Four Subnets (two public and two private).
-3) A Nat Gateway (this will be attached in one of the public subnets to provide secure internet conectivity to pods deployed in private subnets).
-4) A Internet Gateway.
-5) Two Route Tables (one with rule to route traffic from private subnets to nat gateway and other with rule to route traffic between public subnets and internet gateway).
-6) EKS Cluster using Fargate (all required IAM policies and roles also will be created).
-7) A OIDC Provider for EKS cluster conectivity with other AWS resources.
-8) Two Fargate Profiles (one for kube-system namespace and other for custom namespace in which you can deploy application using helm code available in this repo. To improve security both profiles will be attached with private subnets so that pods can be deployed only in private subnets.).
-9) Install Metrics Server so that HPA can be implemented on cluster.
-10) Install AWS LoadBalancer Controller for handling ingress resources (all required IAM policies, roles and service account also will be created).
+For that, push any small change in to main branch and deployment workflow will be triggered. Once that will complete successfully infrastructure will be provisioned on your AWS account.
 ### Destroy
 To destroy whole infrastructure trigger workflow manually with value "destroy" and a second workflow to destroy infrastructure will be triggered. After it will be completed successfully your AWS account will be cleaned.
