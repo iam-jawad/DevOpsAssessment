@@ -32,7 +32,7 @@ This code will provision following resources in your AWS account.
 10) Install AWS LoadBalancer Controller for handling ingress resources (all required IAM policies, roles and service account also will be created).
 
 # GitHub Actions
-## Intrduction
+## Introduction
 This folder contains GitHub Actions to automate EKS Cluster deployment using Terraform code.
 
 There are two workflows, First one is for provisioning infrastructure. Which will be triggered automatically on push event to main branch. In which it will,
