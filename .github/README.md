@@ -52,7 +52,7 @@ Second workflow is for destroying whole provisioned infrastructure. It can be tr
 You will have to setup follwoing things to run this workflows.
 1. Setup S3 bucket which will be used by Terraform backend to store state file. You will need S3 bucket's **name, key name and region**, later to configure GitHub action's variables.
 2. Create OIDC to connect AWS with GitHub. Do following steps to create OIDC provider in your AWS account.
-    1. Go to **IAM** dashboard and form left pane select **Identity Providers**.
+    1. Go to **IAM** dashboard and from left pane select **Identity Providers**.
     2. On top right corner of page click on **Add Provider**.
     3. Now select **OpenID Connect**.
     4. In **Provider URL** add this ```https://token.actions.githubusercontent.com```.
